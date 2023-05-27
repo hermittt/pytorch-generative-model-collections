@@ -35,7 +35,8 @@ def parse_args():
     parser.add_argument('--gpu_mode', type=bool, default=True)
     parser.add_argument('--benchmark_mode', type=bool, default=True)
 
-    return check_args(parser.parse_args())
+    return check_args(parser.parse_known_args()[0])
+    #return check_args(parser.parse_args())
 
 """checking arguments"""
 def check_args(args):

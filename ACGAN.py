@@ -57,7 +57,7 @@ class discriminator(nn.Module):
             nn.LeakyReLU(0.2),
         )
         self.fc1 = nn.Sequential(
-            nn.Linear(128 * (self.input_size // 4) * (self.input_size // 4), 1024),
+            nn.Linear(128 * (self.input_size // 4) * (self.input_size // 4), latent_dim),
             nn.BatchNorm1d(latent_dim),
             nn.LeakyReLU(0.2),
         )

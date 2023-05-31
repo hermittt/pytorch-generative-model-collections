@@ -7,7 +7,7 @@ from dataloader import dataloader
 class generator(nn.Module):
     # Network Architecture is exactly same as in infoGAN (https://arxiv.org/abs/1606.03657)
     # Architecture : FC1024_BR-FC7x7x128_BR-(64)4dc2s_BR-(1)4dc2s_S
-    def __init__(self, input_dim=100, output_dim=1, input_size=32, class_num=10):
+    def __init__(self, input_dim=100, output_dim=1, input_size=32, class_num=10, latent_dim=1024):
         super(generator, self).__init__()
         self.input_dim = input_dim
         self.output_dim = output_dim
@@ -15,10 +15,10 @@ class generator(nn.Module):
         self.class_num = class_num
 
         self.fc = nn.Sequential(
-            nn.Linear(self.input_dim + self.class_num, 1024),
-            nn.BatchNorm1d(1024),
+            nn.Linear(self.input_dim + self.class_num, latent_dim),
+            nn.BatchNorm1d(latent_dim),
             nn.ReLU(),
-            nn.Linear(1024, 128 * (self.input_size // 4) * (self.input_size // 4)),
+            nn.Linear(latent_dim, 128 * (self.input_size // 4) * (self.input_size // 4)),
             nn.BatchNorm1d(128 * (self.input_size // 4) * (self.input_size // 4)),
             nn.ReLU(),
         )
@@ -42,7 +42,7 @@ class generator(nn.Module):
 class discriminator(nn.Module):
     # Network Architecture is exactly same as in infoGAN (https://arxiv.org/abs/1606.03657)
     # Architecture : (64)4c2s-(128)4c2s_BL-FC1024_BL-FC1_S
-    def __init__(self, input_dim=1, output_dim=1, input_size=32, class_num=10):
+    def __init__(self, input_dim=1, output_dim=1, input_size=32, class_num=10, latent_dim=1024):
         super(discriminator, self).__init__()
         self.input_dim = input_dim
         self.output_dim = output_dim
@@ -58,15 +58,15 @@ class discriminator(nn.Module):
         )
         self.fc1 = nn.Sequential(
             nn.Linear(128 * (self.input_size // 4) * (self.input_size // 4), 1024),
-            nn.BatchNorm1d(1024),
+            nn.BatchNorm1d(latent_dim),
             nn.LeakyReLU(0.2),
         )
         self.dc = nn.Sequential(
-            nn.Linear(1024, self.output_dim),
+            nn.Linear(latent_dim, self.output_dim),
             nn.Sigmoid(),
         )
         self.cl = nn.Sequential(
-            nn.Linear(1024, self.class_num),
+            nn.Linear(latent_dim, self.class_num),
         )
         utils.initialize_weights(self)
 
